@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Times New Roman;
+        }
+
+        body {
+            background: linear-gradient(135deg, #559e90 0%, #1c34a9 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(to right, #6821aa, #13acc7);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .calculator {
+            padding: 30px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+
+        .input-box {
+            flex: 1;
+        }
+
+        .input-box label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .input-box input {
+            width: 100%;
+            padding: 14px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+
+        .input-box input:focus {
+            border-color: #9911cb;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.1);
+        }
+
+        .calculate-btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(to right, #0b0639e0, #6a11cb);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(37, 117, 252, 0.3);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+
+        .result-section {
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+            text-align: center;
+            border: 1px solid #eaeaea;
+            transition: all 0.5s;
+        }
+
+        .result-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .result-display {
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+        }
+
+        .result-item {
+            flex: 1;
+            padding: 15px 5px;
+        }
+
+        .result-value {
+            display: block;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #6a11cb;
+            margin-bottom: 5px;
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .separator {
+            width: 1px;
+            background-color: #ddd;
+            margin: 0 10px;
+        }
+
+        .today-info {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+            color: #555;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            margin-top: 15px;
+            padding: 12px;
+            background-color: rgba(231, 76, 60, 0.1);
+            border-radius: 8px;
+            font-weight: 500;
+            display: none;
+            text-align: center;
+        }
+
+        .validation-error {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 0.85rem;
+            border-top: 1px solid #eee;
+        }
+
+        .icon {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            stroke-width: 0;
+            stroke: currentColor;
+            fill: currentColor;
+            vertical-align: middle;
+        }
+
+        .icon-calculator {
+            width: 1.2em;
+            height: 1.2em;
+        }
+
+        .icon-calendar-day {
+            width: 1.1em;
+            height: 1.1em;
+        }
+
+        .icon-calendar-alt {
+            width: 1.1em;
+            height: 1.1em;
+        }
+
+        .icon-calendar {
+            width: 1.1em;
+            height: 1.1em;
+        }
+
+        .icon-birthday-cake {
+            width: 1.2em;
+            height: 1.2em;
+        }
+
+        .icon-calendar-check {
+            width: 1em;
+            height: 1em;
+        }
+
+        @media (max-width: 600px) {
+            .input-group {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .result-display {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .separator {
+                display: none;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SVG Icons (hidden) -->
+    <svg style="display: none;">
+        <!-- Calculator Icon -->
+        <symbol id="icon-calculator" viewBox="0 0 448 512">
+            <path d="M400 0H48C22.4 0 0 22.4 0 48v416c0 25.6 22.4 48 48 48h352c25.6 0 48-22.4 48-48V48c0-25.6-22.4-48-48-48zM128 435.2c0 6.4-6.4 12.8-12.8 12.8H76.8c-6.4 0-12.8-6.4-12.8-12.8v-38.4c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4zm0-128c0 6.4-6.4 12.8-12.8 12.8H76.8c-6.4 0-12.8-6.4-12.8-12.8v-38.4c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4zm128 128c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4zm0-128c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4zm128 128c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8V268.8c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v166.4zm0-256c0 6.4-6.4 12.8-12.8 12.8H76.8c-6.4 0-12.8-6.4-12.8-12.8V76.8c0-6.4 6.4-12.8 12.8-12.8h294.4c6.4 0 12.8 6.4 12.8 12.8v102.4z"/>
+        </symbol>
+        
+        <!-- Calendar Day Icon -->
+        <symbol id="icon-calendar-day" viewBox="0 0 448 512">
+            <path d="M0 464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V192H0v272zm64-192c0-8.8 7.2-16 16-16h96c8.8 0 16 7.2 16 16v96c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16v-96zM400 64h-48V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H160V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H48C21.5 64 0 85.5 0 112v48h448v-48c0-26.5-21.5-48-48-48z"/>
+        </symbol>
+        
+        <!-- Calendar Alt Icon -->
+        <symbol id="icon-calendar-alt" viewBox="0 0 448 512">
+            <path d="M0 464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V192H0v272zm320-196c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zM192 268c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zM64 268c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12v-40zM400 64h-48V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H160V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H48C21.5 64 0 85.5 0 112v48h448v-48c0-26.5-21.5-48-48-48z"/>
+        </symbol>
+        
+        <!-- Calendar Icon -->
+        <symbol id="icon-calendar" viewBox="0 0 448 512">
+            <path d="M400 64h-48V12c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v52H160V12c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v52H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48zm0 400H48V192h352v272zm0-320H48v-48h352v48z"/>
+        </symbol>
+        
+        <!-- Birthday Cake Icon -->
+        <symbol id="icon-birthday-cake" viewBox="0 0 448 512">
+            <path d="M448 384c-28.02 0-31.26-32-74.5-32-43.43 0-46.825 32-74.75 32-27.695 0-31.454-32-74.75-32-42.842 0-47.218 32-74.5 32-28.148 0-31.202-32-74.75-32-43.547 0-46.653 32-74.75 32v-80c0-26.5 21.5-48 48-48h16V112h64v144h64V112h64v144h64V112h64v144h16c26.5 0 48 21.5 48 48v80zm0 128H0v-96c43.356 0 46.767-32 74.75-32 27.951 0 31.253 32 74.75 32 42.843 0 47.217-32 74.5-32 28.148 0 31.201 32 74.75 32 43.357 0 46.767-32 74.75-32 27.488 0 31.252 32 74.5 32v96zM96 96c-17.75 0-32-14.25-32-32 0-31 32-23 32-64 12 0 32 29.5 32 56s-14.25 40-32 40zm128 0c-17.75 0-32-14.25-32-32 0-31 32-23 32-64 12 0 32 29.5 32 56s-14.25 40-32 40zm128 0c-17.75 0-32-14.25-32-32 0-31 32-23 32-64 12 0 32 29.5 32 56s-14.25 40-32 40z"/>
+        </symbol>
+        
+        <!-- Calendar Check Icon -->
+        <symbol id="icon-calendar-check" viewBox="0 0 448 512">
+            <path d="M436 160H12c-6.627 0-12-5.373-12-12v-36c0-26.51 21.49-48 48-48h48V12c0-6.627 5.373-12 12-12h40c6.627 0 12 5.373 12 12v52h128V12c0-6.627 5.373-12 12-12h40c6.627 0 12 5.373 12 12v52h48c26.51 0 48 21.49 48 48v36c0 6.627-5.373 12-12 12zM12 192h424c6.627 0 12 5.373 12 12v260c0 26.51-21.49 48-48 48H48c-26.51 0-48-21.49-48-48V204c0-6.627 5.373-12 12-12zm333.296 95.947l-28.169-28.398c-4.667-4.705-12.265-4.736-16.97-.068L194.12 364.665l-45.98-46.352c-4.667-4.705-12.266-4.736-16.971-.068l-28.397 28.17c-4.705 4.667-4.736 12.265-.068 16.97l82.601 83.269c4.667 4.705 12.265 4.736 16.97.068l142.953-141.805c4.705-4.667 4.736-12.265.068-16.97z"/>
+        </symbol>
+    </svg>
+
+    <div class="container">
+        <div class="header">
+            <h1>
+                <svg class="icon icon-calculator">
+                    <use xlink:href="#icon-calculator"></use>
+                </svg>
+                Age Calculator
+            </h1>
+            <p>Enter your date of birth to calculate your exact age</p>
+        </div>
+        
+        <div class="calculator">
+            <div class="input-section">
+                <div class="input-group">
+                    <div class="input-box">
+                        <label for="day">
+                            <svg class="icon icon-calendar-day">
+                                <use xlink:href="#icon-calendar-day"></use>
+                            </svg>
+                            Day
+                        </label>
+                        <input type="number" id="day" placeholder="DD" min="1" max="31">
+                        <div class="validation-error" id="day-error">Please enter a valid day (1-31)</div>
+                    </div>
+                    
+                    <div class="input-box">
+                        <label for="month">
+                            <svg class="icon icon-calendar-alt">
+                                <use xlink:href="#icon-calendar-alt"></use>
+                            </svg>
+                            Month
+                        </label>
+                        <input type="number" id="month" placeholder="MM" min="1" max="12">
+                        <div class="validation-error" id="month-error">Please enter a valid month (1-12)</div>
+                    </div>
+                    
+                    <div class="input-box">
+                        <label for="year">
+                            <svg class="icon icon-calendar">
+                                <use xlink:href="#icon-calendar"></use>
+                            </svg>
+                            Year
+                        </label>
+                        <input type="number" id="year" placeholder="YYYY" min="1900" max="2023">
+                        <div class="validation-error" id="year-error">Please enter a valid year (1900-2023)</div>
+                    </div>
+                </div>
+                
+                <button id="calculate-btn" class="calculate-btn">
+                    <svg class="icon icon-calculator">
+                        <use xlink:href="#icon-calculator"></use>
+                    </svg>
+                    Calculate Age
+                </button>
+                
+                <div class="error-message" id="error-message">
+                    Please enter a valid date of birth
+                </div>
+            </div>
+            
+            <div class="result-section" id="result-section" style="display: none;">
+                <h2>
+                    <svg class="icon icon-birthday-cake">
+                        <use xlink:href="#icon-birthday-cake"></use>
+                    </svg>
+                    Your Age
+                </h2>
+                <div class="result-display">
+                    <div class="result-item">
+                        <span class="result-value" id="years">0</span>
+                        <span class="result-label">Years</span>
+                    </div>
+                    
+                    <div class="separator"></div>
+                    
+                    <div class="result-item">
+                        <span class="result-value" id="months">0</span>
+                        <span class="result-label">Months</span>
+                    </div>
+                    
+                    <div class="separator"></div>
+                    
+                    <div class="result-item">
+                        <span class="result-value" id="days">0</span>
+                        <span class="result-label">Days</span>
+                    </div>
+                </div>
+                
+                <div class="today-info">
+                    <svg class="icon icon-calendar-check">
+                        <use xlink:href="#icon-calendar-check"></use>
+                    </svg>
+                    <span>Calculated on: <span id="current-date"></span></span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Age Calculator &copy; <span id="current-year"></span> | Made with JavaScript</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current year in footer
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+            
+            // Set current date in result section
+            const currentDate = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('current-date').textContent = currentDate.toLocaleDateString('en-US', options);
+            
+            // Get DOM elements
+            const dayInput = document.getElementById('day');
+            const monthInput = document.getElementById('month');
+            const yearInput = document.getElementById('year');
+            const calculateBtn = document.getElementById('calculate-btn');
+            const resultSection = document.getElementById('result-section');
+            const errorMessage = document.getElementById('error-message');
+            
+            // Validation error elements
+            const dayError = document.getElementById('day-error');
+            const monthError = document.getElementById('month-error');
+            const yearError = document.getElementById('year-error');
+            
+            // Set max year to current year
+            const currentYear = new Date().getFullYear();
+            yearInput.max = currentYear;
+            
+            // Calculate age when button is clicked
+            calculateBtn.addEventListener('click', calculateAge);
+            
+            // Also calculate when Enter key is pressed in any input
+            [dayInput, monthInput, yearInput].forEach(input => {
+                input.addEventListener('keyup', function(event) {
+                    if (event.key === 'Enter') {
+                        calculateAge();
+                    }
+                });
+            });
+            
+            // Function to calculate age
+            function calculateAge() {
+                // Hide previous errors and result
+                hideAllErrors();
+                resultSection.style.display = 'none';
+                errorMessage.style.display = 'none';
+                
+                // Get input values
+                const day = parseInt(dayInput.value);
+                const month = parseInt(monthInput.value);
+                const year = parseInt(yearInput.value);
+                
+                // Validate inputs
+                if (!validateInputs(day, month, year)) {
+                    return;
+                }
+                
+                // Check if date is valid
+                if (!isValidDate(day, month, year)) {
+                    showError("Please enter a valid date");
+                    return;
+                }
+                
+                // Check if date is not in the future
+                const birthDate = new Date(year, month - 1, day);
+                const today = new Date();
+                
+                if (birthDate > today) {
+                    showError("Birth date cannot be in the future");
+                    return;
+                }
+                
+                // Calculate age
+                const age = getAge(birthDate, today);
+                
+                // Display result
+                document.getElementById('years').textContent = age.years;
+                document.getElementById('months').textContent = age.months;
+                document.getElementById('days').textContent = age.days;
+                
+                // Show result section with animation
+                resultSection.style.display = 'block';
+                resultSection.style.opacity = '0';
+                resultSection.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    resultSection.style.transition = 'all 0.5s';
+                    resultSection.style.opacity = '1';
+                    resultSection.style.transform = 'translateY(0)';
+                }, 10);
+            }
+            
+            // Function to validate inputs
+            function validateInputs(day, month, year) {
+                let isValid = true;
+                
+                // Validate day
+                if (isNaN(day) || day < 1 || day > 31) {
+                    dayError.style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Validate month
+                if (isNaN(month) || month < 1 || month > 12) {
+                    monthError.style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Validate year
+                if (isNaN(year) || year < 1900 || year > currentYear) {
+                    yearError.textContent = `Please enter a valid year (1900-${currentYear})`;
+                    yearError.style.display = 'block';
+                    isValid = false;
+                }
+                
+                return isValid;
+            }
+            
+            // Function to check if date is valid
+            function isValidDate(day, month, year) {
+                // Check if month has the correct number of days
+                const daysInMonth = new Date(year, month, 0).getDate();
+                return day <= daysInMonth;
+            }
+            
+            // Function to calculate age in years, months, and days
+            function getAge(birthDate, currentDate) {
+                let years = currentDate.getFullYear() - birthDate.getFullYear();
+                let months = currentDate.getMonth() - birthDate.getMonth();
+                let days = currentDate.getDate() - birthDate.getDate();
+                
+                // Adjust if current month/day is before birth month/day
+                if (months < 0 || (months === 0 && days < 0)) {
+                    years--;
+                    months += 12;
+                }
+                
+                // Adjust days if negative
+                if (days < 0) {
+                    // Get days in the previous month
+                    const prevMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0);
+                    days += prevMonth.getDate();
+                    months--;
+                    
+                    // Adjust months if negative after subtracting days
+                    if (months < 0) {
+                        months += 12;
+                        years--;
+                    }
+                }
+                
+                return { years, months, days };
+            }
+            
+            // Function to show error message
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+                errorMessage.style.opacity = '0';
+                
+                setTimeout(() => {
+                    errorMessage.style.transition = 'opacity 0.3s';
+                    errorMessage.style.opacity = '1';
+                }, 10);
+            }
+            
+            // Function to hide all error messages
+            function hideAllErrors() {
+                dayError.style.display = 'none';
+                monthError.style.display = 'none';
+                yearError.style.display = 'none';
+                errorMessage.style.display = 'none';
+            }
+            
+            // Add input event listeners to hide errors when user starts typing
+            dayInput.addEventListener('input', () => dayError.style.display = 'none');
+            monthInput.addEventListener('input', () => monthError.style.display = 'none');
+            yearInput.addEventListener('input', () => yearError.style.display = 'none');
+            
+            // Auto-format day and month inputs
+            dayInput.addEventListener('blur', function() {
+                if (this.value.length === 1) {
+                    this.value = '0' + this.value;
+                }
+            });
+            
+            monthInput.addEventListener('blur', function() {
+                if (this.value.length === 1) {
+                    this.value = '0' + this.value;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
