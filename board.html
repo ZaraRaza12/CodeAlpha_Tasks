@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProjectFlow - Board</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #666;
+            padding: 8px 15px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .project-info h2 {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .project-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .members-list {
+            display: flex;
+            align-items: center;
+        }
+
+        .member-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #667eea;
+            margin-right: -8px;
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .invite-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+
+        .invite-btn:hover {
+            background: #5a67d8;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .container {
+            padding: 30px;
+            display: flex;
+            gap: 25px;
+            overflow-x: auto;
+            min-height: calc(100vh - 80px);
+        }
+
+        .board-column {
+            background: #f0f2f5;
+            border-radius: 12px;
+            width: 320px;
+            min-width: 320px;
+            max-height: calc(100vh - 140px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .column-header {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid rgba(0,0,0,0.05);
+        }
+
+        .column-header h3 {
+            font-size: 1rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .task-count {
+            background: #e0e0e0;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .add-task-btn {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .add-task-btn:hover {
+            background: rgba(0,0,0,0.05);
+        }
+
+        .tasks-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .task-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .task-card.priority-high {
+            border-left-color: #e74c3c;
+        }
+
+        .task-card.priority-medium {
+            border-left-color: #f39c12;
+        }
+
+        .task-card.priority-low {
+            border-left-color: #3498db;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+
+        .task-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .task-menu {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .task-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .task-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+
+        .task-assignees {
+            display: flex;
+        }
+
+        .assignee-avatar {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #667eea;
+            margin-right: -5px;
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+        }
+
+        .task-meta {
+            color: #999;
+            display: flex;
+            gap: 10px;
+        }
+
+        .task-meta i {
+            margin-right: 3px;
+        }
+
+        .task-labels {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .label {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .due-date {
+            font-size: 0.7rem;
+            padding: 2px 5px;
+            border-radius: 4px;
+            background: #fee;
+            color: #e74c3c;
+        }
+
+        .due-date.overdue {
+            background: #e74c3c;
+            color: white;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 1.3rem;
+            color: #333;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #f0f0f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #5a67d8;
+        }
+
+        .btn-secondary {
+            background: #f0f2f5;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .comments-section {
+            margin-top: 20px;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 20px;
+        }
+
+        .comment {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .comment-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .comment-time {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .comment-text {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .typing-indicator {
+            color: #999;
+            font-size: 0.9rem;
+            font-style: italic;
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-left">
+            <button class="back-btn" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="project-info">
+                <h2 id="projectName">Loading...</h2>
+                <p id="projectDescription"></p>
+            </div>
+        </div>
+        <div class="nav-right">
+            <div class="members-list" id="membersList">
+                <!-- Members will be loaded here -->
+            </div>
+            <button class="invite-btn" onclick="showAddMemberModal()">
+                <i class="fas fa-user-plus"></i>
+                Invite
+            </button>
+            <div class="user-menu" onclick="toggleUserMenu()">
+                <div class="avatar" id="userAvatar">JD</div>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" id="boardContainer">
+        <!-- Columns will be loaded here -->
+    </div>
+
+    <!-- Task Modal -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Task Details</h2>
+                <button class="close-btn" onclick="hideTaskModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="taskModalBody">
+                <!-- Task details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Task Modal -->
+    <div class="modal" id="createTaskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Task</h2>
+                <button class="close-btn" onclick="hideCreateTaskModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="createTask(event)">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="taskTitle" required placeholder="Task title">
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="taskDescription" rows="3" placeholder="Task description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select id="taskPriority">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Due Date</label>
+                        <input type="date" id="taskDueDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Assign to</label>
+                        <select id="taskAssignees" multiple size="3">
+                            <!-- Members will be loaded here -->
+                        </select>
+                        <small>Hold Ctrl to select multiple</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Labels</label>
+                        <input type="text" id="taskLabels" placeholder="Comma separated labels">
+                    </div>
+                    <button type="submit" class="btn">Create Task</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Member Modal -->
+    <div class="modal" id="addMemberModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Team Member</h2>
+                <button class="close-btn" onclick="hideAddMemberModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="addMember(event)">
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="memberEmail" required placeholder="colleague@company.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Role</label>
+                        <select id="memberRole">
+                            <option value="member">Member</option>
+                            <option value="admin">Admin</option>
+                            <option value="viewer">Viewer</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn">Add Member</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let currentProject = null;
+        let projectId = null;
+        let tasks = {};
+        let socket = null;
+        let currentTaskId = null;
+        let typingTimeout = null;
+        let currentBoardId = null;
+
+        // Get project ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        projectId = urlParams.get('project');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            loadUserData();
+            loadProject();
+            loadTasks();
+            initializeSocket();
+        });
+
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'index.html';
+            }
+        }
+
+        function loadUserData() {
+            const userStr = localStorage.getItem('user');
+            if (userStr) {
+                currentUser = JSON.parse(userStr);
+                const avatar = document.getElementById('userAvatar');
+                avatar.textContent = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            }
+        }
+
+        async function loadProject() {
+            try {
+                const response = await fetch(`http://localhost:5000/api/projects/${projectId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (response.ok) {
+                    currentProject = await response.json();
+                    document.getElementById('projectName').textContent = currentProject.name;
+                    document.getElementById('projectDescription').textContent = currentProject.description || 'No description';
+                    
+                    renderMembers();
+                    renderAssigneesSelect();
+                    
+                    // Join project room for real-time updates
+                    if (socket) {
+                        socket.emit('join-project', projectId);
+                    }
+                } else if (response.status === 401) {
+                    logout();
+                } else if (response.status === 403) {
+                    alert('You don\'t have access to this project');
+                    goBack();
+                }
+            } catch (error) {
+                console.error('Error loading project:', error);
+            }
+        }
+
+        async function loadTasks() {
+            try {
+                const response = await fetch(`http://localhost:5000/api/tasks/project/${projectId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (response.ok) {
+                    tasks = await response.json();
+                    renderBoard();
+                }
+            } catch (error) {
+                console.error('Error loading tasks:', error);
+            }
+        }
+
+        function renderBoard() {
+            const container = document.getElementById('boardContainer');
+            
+            if (!currentProject || !currentProject.boards) return;
+
+            container.innerHTML = currentProject.boards.map(board => {
+                const boardTasks = tasks[board._id] || [];
+                
+                return `
+                    <div class="board-column" data-board-id="${board._id}">
+                        <div class="column-header">
+                            <h3>
+                                ${board.name}
+                                <span class="task-count">${boardTasks.length}</span>
+                            </h3>
+                            <button class="add-task-btn" onclick="showCreateTaskModal('${board._id}')">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        <div class="tasks-container" id="board-${board._id}" ondragover="allowDrop(event)" ondrop="drop(event)">
+                            ${boardTasks.map(task => renderTaskCard(task)).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Initialize drag and drop
+            initDragAndDrop();
+        }
+
+        function renderTaskCard(task) {
+            const priorityClass = `priority-${task.priority}`;
+            const dueDate = task.dueDate ? new Date(task.dueDate) : null;
+            const isOverdue = dueDate && dueDate < new Date();
+            
+            return `
+                <div class="task-card ${priorityClass}" draggable="true" data-task-id="${task._id}" ondragstart="dragStart(event)" ondragend="dragEnd(event)" onclick="viewTask('${task._id}')">
+                    <div class="task-header">
+                        <span class="task-title">${task.title}</span>
+                        <span class="task-menu" onclick="event.stopPropagation(); showTaskMenu('${task._id}')">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </span>
+                    </div>
+                    
+                    ${task.labels && task.labels.length ? `
+                        <div class="task-labels">
+                            ${task.labels.map(label => `
+                                <span class="label" style="background: ${label.color || '#667eea'}20; color: ${label.color || '#667eea'}">
+                                    ${label.name}
+                                </span>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    
+                    <div class="task-description">${task.description || ''}</div>
+                    
+                    <div class="task-footer">
+                        <div class="task-assignees">
+                            ${task.assignedTo && task.assignedTo.length ? task.assignedTo.map(user => `
+                                <div class="assignee-avatar" title="${user.name}">
+                                    ${user.name[0].toUpperCase()}
+                                </div>
+                            `).join('') : ''}
+                        </div>
+                        
+                        <div class="task-meta">
+                            ${dueDate ? `
+                                <span class="due-date ${isOverdue ? 'overdue' : ''}">
+                                    <i class="far fa-calendar"></i>
+                                    ${dueDate.toLocaleDateString()}
+                                </span>
+                            ` : ''}
+                            <span><i class="far fa-comment"></i> 0</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderMembers() {
+            const membersList = document.getElementById('membersList');
+            const members = currentProject.members || [];
+            
+            membersList.innerHTML = members.map(member => `
+                <div class="member-avatar" title="${member.user?.name || 'Member'}">
+                    ${member.user?.name ? member.user.name[0].toUpperCase() : '?'}
+                </div>
+            `).join('');
+        }
+
+        function renderAssigneesSelect() {
+            const select = document.getElementById('taskAssignees');
+            const members = currentProject?.members || [];
+            
+            select.innerHTML = members.map(member => `
+                <option value="${member.user._id}">${member.user.name}</option>
+            `).join('');
+        }
+
+        let draggedItem = null;
+
+        function dragStart(e) {
+            draggedItem = e.target.closest('.task-card');
+            e.dataTransfer.setData('text/plain', draggedItem.dataset.taskId);
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function dragEnd(e) {
+            draggedItem = null;
+            document.querySelectorAll('.tasks-container').forEach(container => {
+                container.classList.remove('drag-over');
+            });
+        }
+
+        function allowDrop(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            e.target.closest('.tasks-container')?.classList.add('drag-over');
+        }
+
+        function drop(e) {
+            e.preventDefault();
+            const container = e.target.closest('.tasks-container');
+            if (!container) return;
+            
+            container.classList.remove('drag-over');
+            
+            const taskId = e.dataTransfer.getData('text/plain');
+            const newBoardId = container.closest('.board-column').dataset.boardId;
+            
+            if (taskId && newBoardId) {
+                moveTask(taskId, newBoardId);
+            }
+        }
+
+        function initDragAndDrop() {
+            // Drag and drop is handled by the ondragover and ondrop attributes
+        }
+
+        async function moveTask(taskId, newBoardId) {
+            try {
+                const response = await fetch(`http://localhost:5000/api/tasks/${taskId}/move`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ boardId: newBoardId, newPosition: 0 })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    alert(error.message || 'Failed to move task');
+                }
+            } catch (error) {
+                console.error('Error moving task:', error);
+                alert('Error moving task');
+            }
+        }
+
+        function showCreateTaskModal(boardId) {
+            currentBoardId = boardId;
+            document.getElementById('createTaskModal').classList.add('show');
+        }
+
+        function hideCreateTaskModal() {
+            document.getElementById('createTaskModal').classList.remove('show');
+            currentBoardId = null;
+        }
+
+        async function createTask(e) {
+            e.preventDefault();
+            
+            const taskData = {
+                title: document.getElementById('taskTitle').value,
+                description: document.getElementById('taskDescription').value,
+                projectId: projectId,
+                boardId: currentBoardId,
+                priority: document.getElementById('taskPriority').value,
+                dueDate: document.getElementById('taskDueDate').value,
+                assignedTo: Array.from(document.getElementById('taskAssignees').selectedOptions).map(opt => opt.value),
+                labels: document.getElementById('taskLabels').value.split(',').map(l => ({ name: l.trim(), color: '#667eea' })).filter(l => l.name)
+            };
+
+            try {
+                const response = await fetch('http://localhost:5000/api/tasks', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify(taskData)
+                });
+
+                if (response.ok) {
+                    hideCreateTaskModal();
+                    e.target.reset();
+                    loadTasks(); // Reload to show new task
+                } else {
+                    const error = await response.json();
+                    alert(error.message || 'Failed to create task');
+                }
+            } catch (error) {
+                console.error('Error creating task:', error);
+                alert('Error creating task');
+            }
+        }
+
+        async function viewTask(taskId) {
+            currentTaskId = taskId;
+            
+            // Find task in tasks object
+            let task = null;
+            for (const boardId in tasks) {
+                task = tasks[boardId].find(t => t._id === taskId);
+                if (task) break;
+            }
+
+            if (!task) return;
+
+            // Load comments
+            await loadComments(taskId);
+
+            const modalBody = document.getElementById('taskModalBody');
+            modalBody.innerHTML = `
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="taskDetailTitle" value="${task.title}" onchange="updateTask('title', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="taskDetailDescription" rows="3" onchange="updateTask('description', this.value)">${task.description || ''}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Priority</label>
+                    <select id="taskDetailPriority" onchange="updateTask('priority', this.value)">
+                        <option value="low" ${task.priority === 'low' ? 'selected' : ''}>Low</option>
+                        <option value="medium" ${task.priority === 'medium' ? 'selected' : ''}>Medium</option>
+                        <option value="high" ${task.priority === 'high' ? 'selected' : ''}>High</option>
+                        <option value="urgent" ${task.priority === 'urgent' ? 'selected' : ''}>Urgent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Due Date</label>
+                    <input type="date" id="taskDetailDueDate" value="${task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : ''}" onchange="updateTask('dueDate', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="taskDetailStatus" onchange="updateTask('status', this.value)">
+                        <option value="todo" ${task.status === 'todo' ? 'selected' : ''}>To Do</option>
+                        <option value="in_progress" ${task.status === 'in_progress' ? 'selected' : ''}>In Progress</option>
+                        <option value="review" ${task.status === 'review' ? 'selected' : ''}>Review</option>
+                        <option value="done" ${task.status === 'done' ? 'selected' : ''}>Done</option>
+                    </select>
+                </div>
+
+                <div class="comments-section">
+                    <h3>Comments</h3>
+                    <div id="commentsContainer"></div>
+                    
+                    <div class="form-group">
+                        <textarea id="newComment" rows="2" placeholder="Write a comment... (Use @ to mention someone)" oninput="handleTyping()"></textarea>
+                    </div>
+                    <button class="btn" onclick="addComment()">Post Comment</button>
+                </div>
+            `;
+
+            document.getElementById('taskModal').classList.add('show');
+        }
+
+        function hideTaskModal() {
+            document.getElementById('taskModal').classList.remove('show');
+            currentTaskId = null;
+        }
+
+        async function updateTask(field, value) {
+            if (!currentTaskId) return;
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/tasks/${currentTaskId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ [field]: value })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    alert(error.message || 'Failed to update task');
+                }
+            } catch (error) {
+                console.error('Error updating task:', error);
+                alert('Error updating task');
+            }
+        }
+
+        async function loadComments(taskId) {
+            try {
+                const response = await fetch(`http://localhost:5000/api/comments/task/${taskId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (response.ok) {
+                    const comments = await response.json();
+                    renderComments(comments);
+                }
+            } catch (error) {
+                console.error('Error loading comments:', error);
+            }
+        }
+
+        function renderComments(comments) {
+            const container = document.getElementById('commentsContainer');
+            
+            if (comments.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center;">No comments yet</p>';
+                return;
+            }
+
+            container.innerHTML = comments.map(comment => `
+                <div class="comment">
+                    <div class="comment-avatar">
+                        ${comment.userId.name[0].toUpperCase()}
+                    </div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">${comment.userId.name}</span>
+                            <span class="comment-time">${new Date(comment.createdAt).toLocaleString()}</span>
+                        </div>
+                        <div class="comment-text">${comment.content}</div>
+                        ${comment.edited ? '<small style="color:#999">(edited)</small>' : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function addComment() {
+            const content = document.getElementById('newComment').value;
+            if (!content.trim() || !currentTaskId) return;
+
+            try {
+                const response = await fetch('http://localhost:5000/api/comments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({
+                        content,
+                        taskId: currentTaskId,
+                        mentions: []
+                    })
+                });
+
+                if (response.ok) {
+                    document.getElementById('newComment').value = '';
+                    loadComments(currentTaskId);
+                } else {
+                    const error = await response.json();
+                    alert(error.message || 'Failed to add comment');
+                }
+            } catch (error) {
+                console.error('Error adding comment:', error);
+                alert('Error adding comment');
+            }
+        }
+
+        function handleTyping() {
+            if (!socket || !currentTaskId || !projectId) return;
+
+            socket.emit('typing', {
+                projectId,
+                taskId: currentTaskId,
+                isTyping: true
+            });
+
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(() => {
+                socket.emit('typing', {
+                    projectId,
+                    taskId: currentTaskId,
+                    isTyping: false
+                });
+            }, 2000);
+        }
+
+        function initializeSocket() {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+
+            socket = io('http://localhost:5000', {
+                auth: { token }
+            });
+
+            socket.on('connect', () => {
+                console.log('Connected to real-time updates');
+                if (projectId) {
+                    socket.emit('join-project', projectId);
+                }
+            });
+
+            socket.on('task-created', (task) => {
+                loadTasks(); // Reload tasks to show new task
+            });
+
+            socket.on('task-updated', (task) => {
+                loadTasks(); // Reload to show updates
+            });
+
+            socket.on('task-moved', (data) => {
+                loadTasks(); // Reload to reflect new position
+            });
+
+            socket.on('task-deleted', (data) => {
+                loadTasks(); // Reload to remove deleted task
+            });
+
+            socket.on('new-comment', (data) => {
+                if (data.taskId === currentTaskId) {
+                    loadComments(currentTaskId);
+                }
+                
+                // Update comment count in task card
+                loadTasks();
+            });
+
+            socket.on('user-typing', (data) => {
+                if (data.taskId === currentTaskId) {
+                    const typingEl = document.getElementById('typingIndicator');
+                    if (data.isTyping) {
+                        if (!typingEl) {
+                            const indicator = document.createElement('div');
+                            indicator.id = 'typingIndicator';
+                            indicator.className = 'typing-indicator';
+                            indicator.textContent = `${data.userName} is typing...`;
+                            document.querySelector('.comments-section').insertBefore(
+                                indicator,
+                                document.getElementById('newComment').parentNode
+                            );
+                        }
+                    } else {
+                        if (typingEl) {
+                            typingEl.remove();
+                        }
+                    }
+                }
+            });
+
+            socket.on('member-added', (data) => {
+                if (data.projectId === projectId) {
+                    loadProject(); // Reload to show new member
+                }
+            });
+
+            socket.on('member-removed', (data) => {
+                if (data.projectId === projectId) {
+                    loadProject(); // Reload members list
+                }
+            });
+        }
+
+        function showAddMemberModal() {
+            document.getElementById('addMemberModal').classList.add('show');
+        }
+
+        function hideAddMemberModal() {
+            document.getElementById('addMemberModal').classList.remove('show');
+        }
+
+        async function addMember(e) {
+            e.preventDefault();
+
+            const memberData = {
+                email: document.getElementById('memberEmail').value,
+                role: document.getElementById('memberRole').value
+            };
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/projects/${projectId}/members`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify(memberData)
+                });
+
+                if (response.ok) {
+                    alert('Member added successfully');
+                    hideAddMemberModal();
+                    e.target.reset();
+                    loadProject(); // Reload to show new member
+                } else {
+                    const data = await response.json();
+                    alert(data.message || 'Failed to add member');
+                }
+            } catch (error) {
+                console.error('Error adding member:', error);
+                alert('Error adding member');
+            }
+        }
+
+        function showTaskMenu(taskId) {
+            if (confirm('Delete this task?')) {
+                deleteTask(taskId);
+            }
+        }
+
+        async function deleteTask(taskId) {
+            try {
+                const response = await fetch(`http://localhost:5000/api/tasks/${taskId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (response.ok) {
+                    loadTasks(); // Reload to remove deleted task
+                    if (currentTaskId === taskId) {
+                        hideTaskModal();
+                    }
+                } else {
+                    const error = await response.json();
+                    alert(error.message || 'Failed to delete task');
+                }
+            } catch (error) {
+                console.error('Error deleting task:', error);
+                alert('Error deleting task');
+            }
+        }
+
+        function toggleUserMenu() {
+            // Implement user menu dropdown
+            const menu = document.getElementById('userMenu');
+            if (menu) {
+                menu.classList.toggle('show');
+            }
+        }
+
+        function goBack() {
+            window.location.href = 'dashboard.html';
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            if (socket) {
+                socket.disconnect();
+            }
+            window.location.href = 'index.html';
+        }
+
+        // Close modals when clicking outside
+        document.addEventListener('click', (e) => {
+            const modals = document.querySelectorAll('.modal.show');
+            modals.forEach(modal => {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                }
+            });
+        });
+    </script>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</body>
+</html>
